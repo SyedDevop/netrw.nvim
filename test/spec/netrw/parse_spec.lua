@@ -25,6 +25,27 @@ local testcases = {
 			type = parse.TYPE_FILE,
 		},
 	},
+
+	{
+		liststyle = 0,
+		line = "main.go*",
+		expected = {
+			dir = curdir,
+			node = "main.go",
+			extension = "go",
+			type = parse.TYPE_FILE,
+		},
+	},
+	{
+		liststyle = 0,
+		line = "ui main.go*",
+		expected = {
+			dir = curdir,
+			node = "ui main.go",
+			extension = "go",
+			type = parse.TYPE_FILE,
+		},
+	},
 	{
 		liststyle = 0,
 		line = "README.md",

@@ -29,7 +29,17 @@ local parse_liststyle_0 = function(line, curdir)
 			type = M.TYPE_DIR,
 		}
 	end
-
+	-- This pattern will capture the shortest sequence of characters at
+	-- the start of the string that is immediately followed by a *.
+	local _, _, file = string.find(line, "^(.+)%*")
+	if file then
+		return {
+			dir = curdir,
+			node = file,
+			extension = vim.fn.fnamemodify(file, ":e"),
+			type = M.TYPE_FILE,
+		}
+	end
 	return {
 		dir = curdir,
 		node = line,
