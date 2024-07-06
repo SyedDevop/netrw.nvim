@@ -3,6 +3,16 @@ local M = {}
 local config = require("netrw.config")
 local parse = require("netrw.parse")
 
+---@param category string
+---@param name string
+---@return [string,string,boolean] Tuple
+local getIcon = function(category, name)
+	local has_devicons, mini_icons = pcall(require, "mini.icons")
+	if not has_devicons then
+		vim.notify_once("mini.icons is not instaled", vim.log.levels.ERROR, {})
+	end
+	return mini_icons.get(category, name)
+end
 ---@param bufnr number
 M.embelish = function(bufnr)
 	local namespace = vim.api.nvim_create_namespace("netrw")
@@ -21,17 +31,18 @@ M.embelish = function(bufnr)
 		if word.type == parse.TYPE_FILE then
 			opts.sign_text = config.options.icons.file
 			if config.options.use_devicons then
-				local has_devicons, devicons = pcall(require, "nvim-web-devicons")
-				if has_devicons then
-					local ic, hi = devicons.get_icon(word.node, nil, { strict = true, default = false })
-					if ic then
-						opts.sign_hl_group = hi
-						opts.sign_text = ic
-					end
+				local ic, hi = getIcon("file", word.node)
+				if ic then
+					opts.sign_hl_group = hi
+					opts.sign_text = ic
 				end
 			end
 		elseif word.type == parse.TYPE_DIR then
-			opts.sign_text = config.options.icons.directory
+			local ic, hi = getIcon("directory", word.node)
+			if ic then
+				opts.sign_hl_group = hi
+				opts.sign_text = ic
+			end
 		elseif word.type == parse.TYPE_SYMLINK then
 			opts.sign_text = config.options.icons.symlink
 		end
